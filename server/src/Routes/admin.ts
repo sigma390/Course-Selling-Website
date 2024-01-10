@@ -51,13 +51,9 @@ router.post("/login",async(req:Request,res:Response)=>{
         res.status(200).json({msg:"Logged in Successfully", token})
     }
     else{
-
+        res.status(403).json({ message: 'Invalid username or password' });
     }
-
 }
-
-
-
 )
  
 

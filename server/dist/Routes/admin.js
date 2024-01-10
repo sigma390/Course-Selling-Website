@@ -53,6 +53,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).json({ msg: "Logged in Successfully", token });
     }
     else {
+        res.status(403).json({ message: 'Invalid username or password' });
     }
 }));
 module.exports = router;
