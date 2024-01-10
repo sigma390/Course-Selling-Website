@@ -44,4 +44,15 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.json({ message: 'Admin created successfully', token });
     }
 }));
+//login route
+router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = req.body;
+    const admin = yield AdminSchema_1.Admin.findOne({ username, password });
+    if (admin) {
+        const token = jsonwebtoken_1.default.sign({ username, role: admin }, SECRET, { expiresIn: '1hr' });
+        res.status(200).json({ msg: "Logged in Successfully", token });
+    }
+    else {
+    }
+}));
 module.exports = router;
