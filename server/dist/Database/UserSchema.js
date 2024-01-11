@@ -28,7 +28,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const userSchema = new mongoose_1.Schema({
     username: { type: String },
     password: String,
-    purchasedCourse: [{ type: mongoose_1.default.Schema.ObjectId, ref: 'Course' }]
+    purchasedCourse: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Course' }]
 });
 const User = mongoose_1.default.model('User', userSchema);
 exports.User = User;

@@ -80,7 +80,6 @@ router.get("/courses", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const courses = yield CourseSchema_1.Course.find({});
     res.json({ courses });
 }));
-module.exports = router;
 //see a particular course
 router.get("/courses/:courseId", middleware_1.Authentication, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const courseID = req.params.courseId;
@@ -92,3 +91,4 @@ router.get("/courses/:courseId", middleware_1.Authentication, (req, res) => __aw
         res.status(404).json({ msg: "Not found" });
     }
 }));
+module.exports = router;

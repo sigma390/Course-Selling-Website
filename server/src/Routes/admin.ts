@@ -81,7 +81,7 @@ router.get("/courses",async(req:CustomRequest,res:Response)=>{
   res.json({courses});
 })
 
-module.exports = router;
+
 
 //see a particular course
 router.get("/courses/:courseId",Authentication,async(req:CustomRequest,res:Response)=>{
@@ -95,3 +95,5 @@ router.get("/courses/:courseId",Authentication,async(req:CustomRequest,res:Respo
   }
 
 })
+
+module.exports = router;
