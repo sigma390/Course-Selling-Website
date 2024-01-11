@@ -12,11 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SECRET = void 0;
 const AdminSchema_1 = require("../Database/AdminSchema");
+const CourseSchema_1 = require("../Database/CourseSchema");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../Middleware/middleware");
 const router = express_1.default.Router();
-const SECRET = "omkar23";
+exports.SECRET = "omkar23";
 // router.get("/me",async (req: CustomRequest,res:Response)=>{
 //     const admin = await Admin.findOne({username:req.user.username});
 //     if (!admin) {
@@ -40,7 +43,7 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
         };
         const newadmin = new AdminSchema_1.Admin(obj);
         newadmin.save();
-        const token = jsonwebtoken_1.default.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ username, role: 'admin' }, exports.SECRET, { expiresIn: '1h' });
         res.json({ message: 'Admin created successfully', token });
     }
 }));
@@ -49,11 +52,43 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { username, password } = req.body;
     const admin = yield AdminSchema_1.Admin.findOne({ username, password });
     if (admin) {
-        const token = jsonwebtoken_1.default.sign({ username, role: admin }, SECRET, { expiresIn: '1hr' });
+        const token = jsonwebtoken_1.default.sign({ username, role: admin }, exports.SECRET, { expiresIn: '1hr' });
         res.status(200).json({ msg: "Logged in Successfully", token });
     }
     else {
         res.status(403).json({ message: 'Invalid username or password' });
     }
 }));
+//adcourse Route
+router.post('/addcourses', middleware_1.Authentication, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const course = new CourseSchema_1.Course(req.body);
+    yield course.save();
+    res.json({ message: 'Course created successfully', courseId: course.id });
+}));
+//update cousre
+router.put("/courses/:courseId", middleware_1.Authentication, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const course = yield CourseSchema_1.Course.findByIdAndUpdate(req.params.courseId, req.body, { new: true });
+    if (course) {
+        res.json({ msg: "Course Updated Succesfully" });
+    }
+    else {
+        res.status(404).json({ msg: "Course Not found" });
+    }
+}));
+//see Courses
+router.get("/courses", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const courses = yield CourseSchema_1.Course.find({});
+    res.json({ courses });
+}));
 module.exports = router;
+//see a particular course
+router.get("/courses/:courseId", middleware_1.Authentication, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const courseID = req.params.courseId;
+    const course = yield CourseSchema_1.Course.findById(courseID);
+    if (course) {
+        res.json({ course });
+    }
+    else {
+        res.status(404).json({ msg: "Not found" });
+    }
+}));

@@ -5,12 +5,13 @@ import { Course } from '../Database/CourseSchema';
 import jwt from 'jsonwebtoken';
 import express, { Router } from 'express';
 import  { type Request,type Response } from 'express';
+import { Authentication} from "../Middleware/middleware"
 const router: Router = express.Router();
 interface CustomRequest extends Request {
     user?: any; // Adjust the type according to your actual user object type
 }
 
-const SECRET = "omkar23"
+export const SECRET = "omkar23"
 
 // router.get("/me",async (req: CustomRequest,res:Response)=>{
 //     const admin = await Admin.findOne({username:req.user.username});
@@ -56,8 +57,41 @@ router.post("/login",async(req:Request,res:Response)=>{
 }
 )
  
+//adcourse Route
 
+router.post('/addcourses', Authentication, async (req, res) => {
+    const course = new Course(req.body);
+    await course.save();
+    res.json({ message: 'Course created successfully', courseId: course.id });
+  });
 
-
+  //update cousre
+  router.put("/courses/:courseId", Authentication,async (req:CustomRequest,res:Response)=>{
+    const course = await Course.findByIdAndUpdate(req.params.courseId , req.body , {new:true});
+    if (course) {
+      res.json({msg:"Course Updated Succesfully"})
+    }
+    else{
+      res.status(404).json({msg:"Course Not found"});
+    }
+  })
+//see Courses
+router.get("/courses",async(req:CustomRequest,res:Response)=>{
+  const courses = await Course.find({});
+  res.json({courses});
+})
 
 module.exports = router;
+
+//see a particular course
+router.get("/courses/:courseId",Authentication,async(req:CustomRequest,res:Response)=>{
+  const courseID = req.params.courseId;
+  const course = await Course.findById(courseID);
+  if (course) {
+    res.json({course});
+  }
+  else{
+    res.status(404).json({msg:"Not found"});
+  }
+
+})
